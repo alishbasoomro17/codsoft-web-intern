@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List App</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600;
+            height: 500px;
+            padding: 20px;
+            background-color: #eb64d4;
+            border: 1px solid #f1097d;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            animation: shadowAnim 3s infinite alternate;
+        }
+
+        @keyframes shadowAnim {
+            0% {
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            }
+            40% {
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            }
+            100% {
+                box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+            }
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        button {
+            background-color: darkmagenta;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><u>To-Do List</u></h1>
+        <input type="text" id="taskInput" placeholder="Enter a task...">
+        <button id="addTask">Add Task</button>
+        <ul id="taskList"></ul>
+    </div>
+//javascript code for to-do-list
+    <script>
+        const taskInput = document.getElementById("taskInput");
+const addTaskButton = document.getElementById("addTask");
+const taskList = document.getElementById("taskList");
+
+addTaskButton.addEventListener("click", addTask);
+
+function addTask() {
+    const taskText = taskInput.value;
+    if (taskText.trim() === "") {
+        return;
+    }
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+        <span>${taskText}</span>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+    `;
+
+    const editButton = li.querySelector(".edit");
+    const deleteButton = li.querySelector(".delete");
+
+    editButton.addEventListener("click", () => {
+        const newTaskText = prompt("Edit task:", taskText);
+        if (newTaskText !== null && newTaskText.trim() !== "") {
+            li.querySelector("span").textContent = newTaskText;
+            updateLocalStorage();
+        }
+    });
+
+    deleteButton.addEventListener("click", () => {
+        li.remove();
+        updateLocalStorage();
+    });
+
+    taskList.appendChild(li);
+    updateLocalStorage();
+    taskInput.value = "";
+}
+
+function updateLocalStorage() {
+    const tasks = [];
+    const taskElements = document.querySelectorAll("li span");
+    taskElements.forEach(element => {
+        tasks.push(element.textContent);
+    });
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks.forEach(taskText => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <span>${taskText}</span>
+            <button class="edit">Edit</button>
+            <button class="delete">Delete</button>
+        `;
+
+        const editButton = li.querySelector(".edit");
+        const deleteButton = li.querySelector(".delete");
+
+        editButton.addEventListener("click", () => {
+            const newTaskText = prompt("Edit task:", taskText);
+            if (newTaskText !== null && newTaskText.trim() !== "") {
+                li.querySelector("span").textContent = newTaskText;
+                updateLocalStorage();
+            }
+        });
+
+        deleteButton.addEventListener("click", () => {
+            li.remove();
+            updateLocalStorage();
+        });
+
+        taskList.appendChild(li);
+    });
+}
+
+loadTasks();
+
+    </script>
+</body>
+</html>
